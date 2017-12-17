@@ -1,0 +1,49 @@
+<!Doctype html>
+<html lang="in" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Led</title>
+        <script src="mqttws31.js"></script>
+        <style>
+            .but{
+                margin:5%;
+                padding: 2%;
+                font-size: 200%;
+                
+            }
+            #box{
+                margin-left: 25%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box">
+             <h1 >Control default Led of NodeMCU</h1>
+       
+            <button class="but" onclick="ON()" style="background-color: greenyellow">ON</button>
+            <button class="but" onclick="OFF()" style="background-color: red">OFF</button>
+        </div>
+        
+        
+        <script>
+            client=new Paho.MQTT.Client("broker.mqtt-dashboard.com",8000,"ss19915");
+            client.onConnectionLost=function (ResponseObj){ alert("MQTT Connection lost: "+ResponseObj.errorMessage);
+                                                                    client.connect({onSuccess:onConnect});}
+            client.onMessageArrived=function (message) { alert("Message Received: "+message.payloadString);}
+            function onConnect(){
+                alert("Connected to the MQTT Server.");
+                client.subscribe("AD");
+            }
+            client.connect({onSuccess:onConnect});
+            function ON(){
+                message=new Paho.MQTT.Message("o");
+                message._setDestinationName("SAD");
+                client.send(message);
+            }
+            function OFF(){
+                message=new Paho.MQTT.Message("c");
+                message._setDestinationName("SAD");
+                client.send(message);}
+        </script>
+    </body>
+</html>
